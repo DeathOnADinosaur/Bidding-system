@@ -1,0 +1,22 @@
+Server:
+1. The server randomly creates some items and an initial bidding price
+2. brodcast to clients
+3. waits for bids 
+8. The server should recieve all bids and inform the reults to each client 
+9. server needs to keep track how many of each item there is 
+    if item is sold out the item is removed from the brodcast
+
+Client:
+4. each clients program connects to the serer and gets item list and prices
+5. client programs bid , this item is chosen at random and the program bids higher than the current price, 
+    and when they do recdieve the highest bid for each price at the time and bid again
+6. waits to see if it wins
+7. if it does not win it will contoinue submitting higehr price bid until it reaches it maximum accceptable price. 
+10. client has 30% chance of not biding 
+
+Screen output, (client?)
+    bidding has started
+    winner of each item 
+    list of items and the amount of items the client has won in bidding
+
+Report that describes program output results and analysis 
