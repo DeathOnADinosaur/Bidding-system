@@ -7,9 +7,41 @@ This is the solution for the server that you should have at the end of tutorial 
 #pragma comment(lib,"ws2_32.lib")
 #include <WinSock2.h>
 #include <iostream>
-
+#include <string>
+#include <ctime>
+using namespace std;
+struct client {
+	string name;
+	double bid;
+	string item;
+};
+struct item{
+	string name;
+	int price;
+	int amount;
+};
+const int max=3;
+client clients[4];
+item items[max];
 int main()
 {
+	//Create the item array 
+	items[0].name = "ramen";
+	items[1].name = "mountain dew";
+	items[2].name = "dorritos";
+	items[3].name = "bowsette";
+
+	for (int i=0;i<max;i++)
+	{
+		srand(0);
+		int tmp = rand() % 10 + 1;
+		items[i].price = tmp;
+
+		srand(0);
+		tmp= rand() % 10 + 1;
+		items[i].amount = tmp;
+	}
+
 	//WinSock Startup
 	WSAData wsaData;
 	WORD DllVersion = MAKEWORD(2, 1);
@@ -21,7 +53,7 @@ int main()
 	
 	SOCKADDR_IN addr; //Address that we will bind our listening socket to
 	int addrlen = sizeof(addr); //length of the address (required for accept call)
-	addr.sin_addr.s_addr = inet_addr("127.0.0.1"); //Broadcast locally
+	addr.sin_addr.s_addr = inet_addr("192.168.137.1"); //Broadcast locally
 	addr.sin_port = htons(1111); //Port
 	addr.sin_family = AF_INET; //IPv4 Socket
 
@@ -31,6 +63,12 @@ int main()
 
 	SOCKET newConnection; //Socket to hold the client's connection
 	newConnection = accept(sListen, (SOCKADDR*)&addr, &addrlen); //Accept a new connection
+
+	string sndTmp = items[0].name + to_string(items[0].price) + to_string(items[0].amount);
+	const char* msg = sndTmp.c_str();
+
+	cout << msg << endl;
+
 	if (newConnection == 0) //If accepting the client connection failed
 	{
 		std::cout << "Failed to accept the client's connection." << std::endl;
@@ -38,7 +76,7 @@ int main()
 	else //If client connection properly accepted
 	{
 		std::cout << "Client Connected!" << std::endl;
-		char MOTD[256] = "Welcome! This is the Message of the Day."; //Create buffer with message of the day
+		const char* MOTD= msg; //Create buffer with message of the day
 		send(newConnection, MOTD, sizeof(MOTD), NULL); //Send MOTD buffer
 	}
 

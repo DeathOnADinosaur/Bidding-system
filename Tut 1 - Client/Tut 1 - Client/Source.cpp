@@ -6,9 +6,18 @@ This is the solution for the client that you should have at the end of tutorial 
 #pragma comment(lib,"ws2_32.lib")
 #include <WinSock2.h>
 #include <iostream>
+#include <string>
+using namespace std;
+struct item {
+	char name;
+	double price;
+	double amount;
+};
 
+unsigned char * deserialize_int(unsigned char *buffer, int *value);
 int main()
 {
+	
 	//Winsock Startup
 	WSAData wsaData;
 	WORD DllVersion = MAKEWORD(2, 1);
@@ -20,7 +29,7 @@ int main()
 	
 	SOCKADDR_IN addr; //Address to be binded to our Connection socket
 	int sizeofaddr = sizeof(addr); //Need sizeofaddr for the connect function
-	addr.sin_addr.s_addr = inet_addr("127.0.0.1"); //Address = localhost (this pc)
+	addr.sin_addr.s_addr = inet_addr("192.168.137.1"); //Address = localhost (this pc)
 	addr.sin_port = htons(1111); //Port = 1111
 	addr.sin_family = AF_INET; //IPv4 Socket
 
