@@ -23,9 +23,12 @@ struct item{
 	int price;
 	int amount;
 };
+
 const int max=4;
 client clients[4];
 item items[max];
+SOCKET connected[4];
+
 int main()
 {
 	//Create the item array 
@@ -40,12 +43,17 @@ int main()
 		int tmp = rand() % 10 + 1;
 		items[i].price = tmp;
 
+		clients[i].bid = 0;
+		clients[i].name = "no";
+		clients[i].item = "none";
+
 		srand(0);
 		tmp = rand() % 10 + 1;
 		items[i].amount = tmp;
 	}
 	//-------------------------------------------------------------------------//
 	int numConnected = 0;
+	bool insert = true;
 	while(true)
 	{
 	//WinSock Startup
@@ -84,7 +92,20 @@ int main()
 	else //If client connection properly accepted
 	{
 		std::cout << "Client Connected!" << std::endl;
-
+		cout << "connection id " << newConnection << endl;
+		insert = true;
+		for (int x : connected)
+		{
+			if (x == newConnection)
+				insert = false;
+		}
+		if (insert)
+		{
+			connected[numConnected] = newConnection;
+			clients[numConnected].id = newConnection;
+			if(numConnected<max)
+				numConnected++;
+		}
 		const char* MOTD = msg; //Create buffer with message of the day
 		send(newConnection, MOTD, 255, NULL); //Send MOTD buffer
 	}
@@ -98,21 +119,24 @@ int main()
 	tmp = incMsg;
 	stringstream iss(tmp);
 
-	for (int i = 0; i < 1; i++) {
+	for (int i = 0; i < max; i++) {
 		for (int j = 0; j < 3; j++) {
-			iss >> word;
-			if (j == 0)
-				clients[i].name = word;
+			if (clients[i].id == newConnection)
+			{
+				iss >> word;
+				if (j == 0)
+					clients[i].name = word;
 
-			if (j == 1)
-				clients[i].bid = stoi(word);
+				if (j == 1)
+					clients[i].bid = stoi(word);
 
-			if (j == 2)
-				clients[i].item = word;
+				if (j == 2)
+					clients[i].item = word;
+			}
 		}
 	}
-	clients[0].id = newConnection;
-	for (int i = 0; i < 1; i++)
+	
+	for (int i = 0; i < max; i++)
 	{
 		cout << "Name: " << clients[i].name << endl;
 		cout << "Bid: " << clients[i].bid << endl;
@@ -120,7 +144,7 @@ int main()
 		cout << "id: " << clients[i].id << endl;
 	}
 	cout << endl;
-	Sleep(2000);
+	Sleep(8000);
 }
 	system("pause");
 	return 0;
